@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "194827988350",
+    "project_id": "naycity-1b725",
+    "storage_bucket": "naycity-1b725.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:194827988350:android:265a5c4469983916ba572f",
+        "android_client_info": {
+          "package_name": "com.example.mamamonaadmin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAXN2FrkP3CJRch5wDaQVIN6kfHR_jh1AI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
