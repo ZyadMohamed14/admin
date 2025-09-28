@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import 'api.dart';
 import 'models.dart';
@@ -60,11 +61,52 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
     }
   }
 
+  String _getLocalizedStatus(String status) {
+    switch (status.toLowerCase()) {
+      case 'pending':
+        return 'pending'.tr;
+      case 'confirmed':
+        return 'confirmed'.tr;
+      case 'out_for_delivery':
+        return 'out_for_delivery'.tr;
+      case 'delivered':
+        return 'delivered'.tr;
+      case 'canceled':
+        return 'canceled'.tr;
+      default:
+        return status;
+    }
+  }
+
+  String _getLocalizedPaymentStatus(String paymentStatus) {
+    switch (paymentStatus.toLowerCase()) {
+      case 'paid':
+        return 'paid'.tr;
+      case 'unpaid':
+        return 'unpaid'.tr;
+      default:
+        return paymentStatus;
+    }
+  }
+
+  String _getLocalizedPaymentMethod(String paymentMethod) {
+    switch (paymentMethod.toLowerCase()) {
+      case 'cash_on_delivery':
+        return 'cash_on_delivery'.tr;
+      case 'digital_payment':
+        return 'digital_payment'.tr;
+      case 'card_payment':
+        return 'card_payment'.tr;
+      default:
+        return paymentMethod.replaceAll('_', ' ').toUpperCase();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Order #${widget.order.id}'),
+        title: Text('${'order'.tr} #${widget.order.id}'),
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
       ),
@@ -95,14 +137,14 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Order Status',
+                            'order_status'.tr,
                             style: TextStyle(
                               fontSize: 14,
                               color: Colors.grey[600],
                             ),
                           ),
                           Text(
-                            widget.order.orderStatus.replaceAll('_', ' ').toUpperCase(),
+                            _getLocalizedStatus(widget.order.orderStatus),
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -116,14 +158,14 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Text(
-                          'Payment',
+                          'payment'.tr,
                           style: TextStyle(
                             fontSize: 14,
                             color: Colors.grey[600],
                           ),
                         ),
                         Text(
-                          widget.order.paymentStatus.toUpperCase(),
+                          _getLocalizedPaymentStatus(widget.order.paymentStatus),
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -152,7 +194,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Customer Information',
+                        'customer_information'.tr,
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -203,7 +245,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Delivery Information',
+                        'delivery_information'.tr,
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -265,7 +307,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Order Items',
+                      'order_items'.tr,
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -279,17 +321,17 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                       Center(
                         child: Column(
                           children: [
-                            Text('Error loading items: $errorMessage'),
+                            Text('${'error_loading_items'.tr}: $errorMessage'),
                             SizedBox(height: 8),
                             ElevatedButton(
                               onPressed: _loadOrderDetails,
-                              child: Text('Retry'),
+                              child: Text('retry'.tr),
                             ),
                           ],
                         ),
                       )
                     else if (orderDetails.isEmpty)
-                        Center(child: Text('No items found'))
+                        Center(child: Text('no_items_found'.tr))
                       else
                         ListView.separated(
                           shrinkWrap: true,
@@ -327,7 +369,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                               subtitle: Text(
                                 item.productDetails.description.isNotEmpty
                                     ? item.productDetails.description
-                                    : 'No description',
+                                    : 'no_description'.tr,
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -336,7 +378,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
-                                    'Qty: ${item.quantity}',
+                                    '${'qty'.tr}: ${item.quantity}',
                                     style: TextStyle(
                                       fontWeight: FontWeight.w600,
                                       color: Colors.blue,
@@ -371,7 +413,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Order Summary',
+                      'order_summary'.tr,
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -382,7 +424,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Subtotal:'),
+                        Text('${'subtotal'.tr}:'),
                         Text('\$${(widget.order.orderAmount - widget.order.deliveryCharge).toStringAsFixed(2)}'),
                       ],
                     ),
@@ -391,7 +433,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Delivery Charge:'),
+                        Text('${'delivery_charge'.tr}:'),
                         Text('\$${widget.order.deliveryCharge.toStringAsFixed(2)}'),
                       ],
                     ),
@@ -402,7 +444,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Total Amount:',
+                          '${'total_amount'.tr}:',
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -424,9 +466,9 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Payment Method:'),
+                        Text('${'payment_method'.tr}:'),
                         Text(
-                          widget.order.paymentMethod.replaceAll('_', ' ').toUpperCase(),
+                          _getLocalizedPaymentMethod(widget.order.paymentMethod),
                           style: TextStyle(fontWeight: FontWeight.w600),
                         ),
                       ],
@@ -435,7 +477,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                     if (widget.order.orderNote != null && widget.order.orderNote!.isNotEmpty) ...[
                       SizedBox(height: 12),
                       Text(
-                        'Order Note:',
+                        '${'order_note'.tr}:',
                         style: TextStyle(fontWeight: FontWeight.w600),
                       ),
                       SizedBox(height: 4),

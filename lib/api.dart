@@ -81,12 +81,33 @@ class ApiService {
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         final List<dynamic> ordersJson = data['orders'];
-        return ordersJson.map((json) => Order.fromJson(json)).toList();
+
+        // Parse all orders
+        final orders = ordersJson.map((json) => Order.fromJson(json)).toList();
+
+        // Get today's date (only year, month, day to avoid time mismatch)
+        final today = DateTime.now();
+        final todayOnlyDate = DateTime(today.year, today.month, today.day);
+
+        // Filter orders where deliveryDate matches today's date
+        final todayOrders = orders.where((order) {
+          if (order.deliveryDate == null) return false;
+          try {
+            final orderDate = DateTime.parse(order.deliveryDate!);
+            final orderOnlyDate = DateTime(orderDate.year, orderDate.month, orderDate.day);
+            return orderOnlyDate == todayOnlyDate;
+          } catch (e) {
+            // لو الـ date مش صالح نتجاهل الطلب
+            return false;
+          }
+        }).toList();
+
+        return todayOrders;
       } else {
-        throw Exception('Failed to load orders');
+        throw Exception('فشل تحميل الطلبات');
       }
     } catch (e) {
-      throw Exception('Network error: $e');
+      throw Exception('خطأ في الشبكة: $e');
     }
   }
 

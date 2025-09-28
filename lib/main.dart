@@ -1,28 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-
-import 'auth_screen.dart';
-import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_navigation/src/root/get_material_app.dart';
+import 'package:get/get_navigation/src/routes/transitions_type.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'auth_screen.dart';
 
-// main.dart - Enhanced for background notifications
-import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'auth_screen.dart';
+import 'language.dart';
+
+
+
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 FlutterLocalNotificationsPlugin();
@@ -30,7 +25,7 @@ FlutterLocalNotificationsPlugin();
 // CRITICAL: This function runs when app is completely closed
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
+ // await Firebase.initializeApp();
 
   print('BACKGROUND MESSAGE: ${message.messageId}');
   print('BACKGROUND DATA: ${message.data}');
@@ -264,13 +259,47 @@ Future<void> requestNotificationPermissions() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    // Initialize the LanguageController
+    final LanguageController languageController = Get.put(LanguageController());
+
+    return Obx(() => GetMaterialApp(
       title: 'Admin Orders',
+
+      // Theme configuration
       theme: ThemeData(
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
+        // Add RTL support for Arabic
+        fontFamily: languageController.isArabic ? 'Arial' : null,
       ),
+
+      // Localization setup
+      translations: AppTranslations(),
+      locale: languageController.locale.value,
+      fallbackLocale: Locale('ar', 'SA'), // Fallback to Arabic if translation not found
+
+      // Add Flutter's built-in localization delegates
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+
+      // Supported locales
+      supportedLocales: [
+        Locale('en', 'US'), // English
+        Locale('ar', 'SA'), // Arabic
+      ],
+
+      // Home screen
       home: AuthWrapper(),
-    );
+
+      // Debug banner
+      debugShowCheckedModeBanner: false,
+
+      // Route settings (optional - for better navigation)
+      defaultTransition: Transition.cupertino,
+      transitionDuration: Duration(milliseconds: 300),
+    ));
   }
 }
